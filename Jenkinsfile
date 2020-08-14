@@ -34,7 +34,7 @@ pipeline {
           steps{
             container('kubectl') {
             // Change deployed image in canary to the one we just built
-              sh "kubectl set image deployment/gateway gateway=gateway:1.0 --record 
+              sh "kubectl set image deployment/gateway gateway=gateway:1.0
             }
           }
         }
