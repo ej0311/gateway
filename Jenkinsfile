@@ -1,10 +1,6 @@
 pipeline {
     agent any 
     
-    script {
-      System.setProperty("org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL", "86400");
-    }
-    
     environment {
       PROJECT = "cnaps-project"
       APP_NAME = "gateway"
