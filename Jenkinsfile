@@ -1,6 +1,4 @@
 pipeline {
-    agent any 
-    
     environment {
       PROJECT = "cnaps-project"
       APP_NAME = "gateway"
