@@ -11,6 +11,8 @@ import com.skcc.gateway.security.AuthoritiesConstants;
 import com.skcc.gateway.security.SecurityUtils;
 import com.skcc.gateway.service.dto.UserDTO;
 
+import com.skcc.gateway.service.mapper.UserMapper;
+import com.skcc.gateway.web.rest.errors.UsePointsUnavailableException;
 import io.github.jhipster.security.RandomUtil;
 
 import org.slf4j.Logger;
@@ -312,13 +314,17 @@ public class UserService {
         }
     }
 
-    public User usepoints(Long userId, int latefee)  {
-
+    public User usepoints(Long userId, int latefee) throws UsePointsUnavailableException {
         User user = userRepository.findById(userId).get();
-        return user.usePoints(latefee);
+        user= user.usePoints(latefee);
+        return userRepository.save(user);
     }
 
     public void createRental(Long id) throws InterruptedException, ExecutionException, JsonProcessingException {
         gatewayKafkaProducer.createRental(id);
+    }
+
+    public User loadUserById(Long userId) {
+        return userRepository.findById(userId).get();
     }
 }

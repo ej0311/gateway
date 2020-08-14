@@ -34,11 +34,14 @@ import GatewayService from '@/admin/gateway/gateway.service';
 import BookService from '@/entities/book/book/book.service';
 import InStockBookService from '@/entities/book/in-stock-book/in-stock-book.service';
 import BookCatalogService from '@/entities/bookCatalog/book-catalog/book-catalog.service';
-import TopListBooksService from '@/entities/bookCatalog/top-list-books/top-list-books.service';
 import RentalService from '@/entities/rental/rental/rental.service';
 import OverdueItemService from '@/entities/rental/overdue-item/overdue-item.service';
 import RentedItemService from '@/entities/rental/rented-item/rented-item.service';
 import ReturnedItemService from '@/entities/rental/returned-item/returned-item.service';
+import BookRentalService from '@/cnaps/book-rental-service/book-rental.service';
+import BookRegisterService from '@/cnaps/book-register-service/book-register.service';
+import RentedBookManagementService from '@/cnaps/rented-book-manage-service/rented-book-management.service';
+import MyPageService from '@/cnaps/mypage-service/mypage.service';
 // jhipster-needle-add-entity-service-to-main-import - JHipster will import entities services here
 
 /* tslint:enable */
@@ -106,13 +109,16 @@ new Vue({
     bookService: () => new BookService(),
     inStockBookService: () => new InStockBookService(),
     bookCatalogService: () => new BookCatalogService(),
-    topListBooksService: () => new TopListBooksService(),
     rentalService: () => new RentalService(),
     overdueItemService: () => new OverdueItemService(),
     rentedItemService: () => new RentedItemService(),
     returnedItemService: () => new ReturnedItemService(),
     // jhipster-needle-add-entity-service-to-main - JHipster will import entities services here
     accountService: () => accountService,
+    bookRentalService: () => new BookRentalService(),
+    bookRegisterService: () => new BookRegisterService(),
+    rentedBookManagementService: () => new RentedBookManagementService(),
+    myPageService: () => new MyPageService(),
   },
   i18n,
   store,

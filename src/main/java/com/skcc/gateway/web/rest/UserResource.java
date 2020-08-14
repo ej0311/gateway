@@ -9,10 +9,12 @@ import com.skcc.gateway.service.MailService;
 import com.skcc.gateway.service.UserService;
 import com.skcc.gateway.service.dto.LatefeeDTO;
 import com.skcc.gateway.service.dto.UserDTO;
+import com.skcc.gateway.service.mapper.UserMapper;
 import com.skcc.gateway.web.rest.errors.BadRequestAlertException;
 import com.skcc.gateway.web.rest.errors.EmailAlreadyUsedException;
 import com.skcc.gateway.web.rest.errors.LoginAlreadyUsedException;
 
+import com.skcc.gateway.web.rest.errors.UsePointsUnavailableException;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -73,11 +75,12 @@ public class UserResource {
     private final UserRepository userRepository;
 
     private final MailService mailService;
-
-    public UserResource(UserService userService, UserRepository userRepository, MailService mailService) {
+    private final UserMapper userMapper;
+    public UserResource(UserService userService, UserRepository userRepository, MailService mailService, UserMapper userMapper) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.mailService = mailService;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -190,13 +193,15 @@ public class UserResource {
         return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName,  "userManagement.deleted", login)).build();
     }
 
-    @PutMapping("/usepoints")
-    public ResponseEntity usePoint(@RequestBody LatefeeDTO latefeeDTO) throws InterruptedException, ExecutionException, JsonProcessingException {
-        User user=userService.usepoints(latefeeDTO.getUserId(), latefeeDTO.getLatefee());
-        if(user!=null){
-            return new ResponseEntity<>(HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    @PutMapping("/users/usepoints")
+    public ResponseEntity usePoint(@RequestBody LatefeeDTO latefeeDTO) throws UsePointsUnavailableException {
+        userService.usepoints(latefeeDTO.getUserId(), latefeeDTO.getLatefee());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable("userId")Long userId){
+        UserDTO userDTO = userMapper.userToUserDTO(userService.loadUserById(userId));
+        return ResponseEntity.ok().body(userDTO);
     }
 }

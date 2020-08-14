@@ -3,24 +3,55 @@
         <b-navbar-brand class="logo" b-link to="/">
             <span class="logo-img"></span>
             <span v-text="$t('global.title')" class="navbar-title">gateway</span> <span class="navbar-version">{{version}}</span>
-        </b-navbar-brand>      
-        <b-navbar-toggle 
-        right 
-        class="jh-navbar-toggler d-lg-none" 
-        href="javascript:void(0);"  
-        data-toggle="collapse" 
-        target="header-tabs" 
-        aria-expanded="false" 
+        </b-navbar-brand>
+        <b-navbar-toggle
+        right
+        class="jh-navbar-toggler d-lg-none"
+        href="javascript:void(0);"
+        data-toggle="collapse"
+        target="header-tabs"
+        aria-expanded="false"
         aria-label="Toggle navigation">
             <font-awesome-icon icon="bars" />
         </b-navbar-toggle>
-           
+
         <b-collapse is-nav id="header-tabs">
             <b-navbar-nav class="ml-auto">
                 <b-nav-item to="/" exact>
                     <span>
                         <font-awesome-icon icon="home" />
                         <span v-text="$t('global.menu.home')">Home</span>
+                    </span>
+                </b-nav-item>
+                <b-nav-item-dropdown
+                    right
+                    id="bookManagement-menu"
+                    v-if="hasAnyAuthority('ROLE_ADMIN') && authenticated"
+                    :class="{'router-link-active': subIsActive('/admin')}"
+                    active-class="active" class="pointer">
+                    <span slot="button-content" class="navbar-dropdown-menu">
+                        <font-awesome-icon icon="th-list"/>
+                        <span v-text="$t('global.menu.bookManagement')">Book Management</span>
+                    </span>
+                    <b-dropdown-item to="/register/book">
+                        <font-awesome-icon icon="plus"/>
+                        <span v-text="$t('global.menu.registerbook')">Register New Book</span>
+                    </b-dropdown-item>
+                    <b-dropdown-item to="/manage/rentedBook">
+                        <font-awesome-icon icon="book"/>
+                        <span v-text="$t('global.menu.manageRented')">RentedBooks Management</span>
+                    </b-dropdown-item>
+                </b-nav-item-dropdown>
+                <b-nav-item to="/rent">
+                    <span>
+                        <font-awesome-icon icon="book"/>
+                        <span v-text="$t('global.menu.rentalpage')">Rental Page</span>
+                    </span>
+                </b-nav-item>
+                <b-nav-item to="/mypage">
+                    <span>
+                        <font-awesome-icon icon="user"/>
+                        <span v-text="$t('global.menu.mypage.home')">MyPage</span>
                     </span>
                 </b-nav-item>
                 <b-nav-item-dropdown
@@ -43,10 +74,6 @@
                     <b-dropdown-item to="/book-catalog">
                         <font-awesome-icon icon="asterisk" />
                         <span v-text="$t('global.menu.entities.bookCatalogBookCatalog')">BookCatalog</span>
-                    </b-dropdown-item>
-                    <b-dropdown-item to="/top-list-books">
-                        <font-awesome-icon icon="asterisk" />
-                        <span v-text="$t('global.menu.entities.bookCatalogTopListBooks')">TopListBooks</span>
                     </b-dropdown-item>
                     <b-dropdown-item to="/rental">
                         <font-awesome-icon icon="asterisk" />

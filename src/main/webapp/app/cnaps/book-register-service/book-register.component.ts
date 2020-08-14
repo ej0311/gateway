@@ -2,17 +2,18 @@ import { mixins } from 'vue-class-component';
 
 import { Component, Vue, Inject } from 'vue-property-decorator';
 import Vue2Filters from 'vue2-filters';
-import { ITopListBooks } from '@/shared/model/bookCatalog/top-list-books.model';
+import { IInStockBook } from '@/shared/model/book/in-stock-book.model';
+import { IBook } from '@/shared/model/book/book.model';
 import AlertMixin from '@/shared/alert/alert.mixin';
 
-import TopListBooksService from './top-list-books.service';
+import BookRegisterService from '@/cnaps/book-register-service/book-register.service';
 
 @Component({
   mixins: [Vue2Filters.mixin],
 })
-export default class TopListBooks extends mixins(AlertMixin) {
-  @Inject('topListBooksService') private topListBooksService: () => TopListBooksService;
-  private removeId: string = null;
+export default class BookRegister extends mixins(AlertMixin) {
+  @Inject('bookRegisterService') private bookRegisterService: () => BookRegisterService;
+  private removeId: number = null;
   public itemsPerPage = 20;
   public queryCount: number = null;
   public page = 1;
@@ -20,21 +21,23 @@ export default class TopListBooks extends mixins(AlertMixin) {
   public propOrder = 'id';
   public reverse = false;
   public totalItems = 0;
-
-  public topListBooks: ITopListBooks[] = [];
-
+  public title = '';
+  public books: IBook[] = [];
+  public instockBooks: IInStockBook[] = [];
   public isFetching = false;
+  public selected = [];
+  public userId: any = null;
 
   public mounted(): void {
-    this.retrieveAllTopListBookss();
+    this.retrieveAllBooks();
   }
 
   public clear(): void {
     this.page = 1;
-    this.retrieveAllTopListBookss();
+    this.retrieveAllBooks();
   }
 
-  public retrieveAllTopListBookss(): void {
+  public retrieveAllBooks(): void {
     this.isFetching = true;
 
     const paginationQuery = {
@@ -42,11 +45,11 @@ export default class TopListBooks extends mixins(AlertMixin) {
       size: this.itemsPerPage,
       sort: this.sort(),
     };
-    this.topListBooksService()
+    this.bookRegisterService()
       .retrieve(paginationQuery)
       .then(
         res => {
-          this.topListBooks = res.data;
+          this.instockBooks = res.data;
           this.totalItems = Number(res.headers['x-total-count']);
           this.queryCount = this.totalItems;
           this.isFetching = false;
@@ -55,26 +58,6 @@ export default class TopListBooks extends mixins(AlertMixin) {
           this.isFetching = false;
         }
       );
-  }
-
-  public prepareRemove(instance: ITopListBooks): void {
-    this.removeId = instance.id;
-    if (<any>this.$refs.removeEntity) {
-      (<any>this.$refs.removeEntity).show();
-    }
-  }
-
-  public removeTopListBooks(): void {
-    this.topListBooksService()
-      .delete(this.removeId)
-      .then(() => {
-        const message = this.$t('gatewayApp.bookCatalogTopListBooks.deleted', { param: this.removeId });
-        this.alertService().showAlert(message, 'danger');
-        this.getAlertFromStore();
-        this.removeId = null;
-        this.retrieveAllTopListBookss();
-        this.closeDialog();
-      });
   }
 
   public sort(): Array<any> {
@@ -93,7 +76,7 @@ export default class TopListBooks extends mixins(AlertMixin) {
   }
 
   public transition(): void {
-    this.retrieveAllTopListBookss();
+    this.retrieveAllBooks();
   }
 
   public changeOrder(propOrder): void {
@@ -103,6 +86,22 @@ export default class TopListBooks extends mixins(AlertMixin) {
   }
 
   public closeDialog(): void {
-    (<any>this.$refs.removeEntity).hide();
+    (<any>this.$refs.doRental).hide();
+  }
+
+  public search(): void {
+    this.isFetching = true;
+    const paginationQuery = {
+      page: this.page - 1,
+      size: this.itemsPerPage,
+      sort: this.sort(),
+    };
+    this.bookRegisterService()
+      .findByTitle(this.title, paginationQuery)
+      .then(res => {
+        this.instockBooks = res.data;
+        this.title = '';
+        this.isFetching = false;
+      });
   }
 }
