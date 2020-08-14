@@ -19,7 +19,6 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
-                sh "cd ${APP_NAME}"
                 sh "rm -rf src/test"
             }
         }
